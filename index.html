@@ -5,7 +5,7 @@
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   </head>
 
-  <script>
+  <!-- <script>
     AFRAME.registerComponent("controlador", {
       init: function () {
         this.toggle = false;
@@ -24,24 +24,62 @@
         }
       },
     });
+  </script> -->
+
+  <script>
+    AFRAME.registerComponent("image-changer", {
+      init: function () {
+        this.images = ["#teste01", "#teste02"];
+        this.currentIndex = 0;
+        this.imageEl = this.el;
+        this.toggle = false;
+      },
+      tick: function () {
+        if (this.el.object3D.visible == true) {
+          if (!this.toggle) {
+            this.toggle = true;
+            this.startImageCycle();
+          }
+        } else {
+          this.toggle = false;
+          clearTimeout(this.timer);
+        }
+      },
+      changeImage: function () {
+        this.imageEl.setAttribute(
+          "material",
+          "src",
+          this.images[this.currentIndex]
+        );
+        this.currentIndex = (this.currentIndex + 1) % this.images.length;
+        let delay = this.currentIndex === 0 ? 2000 : 1000;
+        this.timer = setTimeout(() => this.changeImage(), delay);
+      },
+      startImageCycle: function () {
+        this.changeImage();
+      },
+    });
   </script>
 
   <body style="margin: 0px; overflow: hidden">
     <a-scene vr-mode-ui="enabled: false" embedded arjs="debugUIEnabled: false">
       <a-assets>
-        <video
+        <!-- <video
           id="video"
           src="https://cdn.glitch.global/2b5e5737-9141-492d-a26b-7e70b7122300/Aluno.mp4?v=1742413425344
         "
           loop
-        ></video>
+        ></video> -->
+        <img id="teste01" src="teste01.png" />
+        <img id="teste02" src="teste02.png" />
       </a-assets>
 
-      <a-marker
+      <!-- <a-marker preset="hiro" controlador>
+        <a-marker
         type="pattern"
-        url="https://raw.githubusercontent.com/KirstenLuz/Tests/refs/heads/main/pattern-frameQRCodeGitHub.patt"
+        url="https://raw.githubusercontent.com/KirstenLuz/CubeInvite/refs/heads/main/pattern-CubeInvite_QRCode.patt"
         controlador
-      >
+      > 
         <a-video
           width="1.5"
           height="1"
@@ -50,6 +88,18 @@
           src="#video"
         >
         </a-video>
+      </a-marker> -->
+
+      <a-marker preset="hiro">
+        <a-plane
+          width="1.5"
+          height="1"
+          rotation="0 0 0"
+          position="0 0.75 0"
+          image-changer
+          material="shader: flat; src: #teste01"
+        >
+        </a-plane>
       </a-marker>
 
       <a-entity camera> </a-entity>
